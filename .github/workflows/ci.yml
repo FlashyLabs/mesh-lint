@@ -36,6 +36,12 @@ jobs:
       # and reported it as a test failure.
       - run: npm ci
       - name: The manifest is installable and claims nothing it has not got
+        # bash, explicitly. GitHub runs `run:` with PowerShell on Windows
+        # runners, where `set -euo pipefail` is a syntax error — so this step
+        # failed on three of the nine cells for a reason that had nothing to do
+        # with the manifest. The generator's own suite executed these under
+        # /bin/bash and could not see it.
+        shell: bash
         run: |
           set -euo pipefail
           node --input-type=module -e "
