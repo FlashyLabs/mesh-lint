@@ -9,6 +9,8 @@
       ██
 ```
 
+[![CI](https://github.com/flashylabs/mesh-lint/actions/workflows/ci.yml/badge.svg)](https://github.com/flashylabs/mesh-lint/actions/workflows/ci.yml) [![License](https://img.shields.io/badge/licence-Apache--2.0-blue)](LICENSE)
+
 **A GitHub Action for the checks that fail silently.**
 
 Annotates a pull request with the defects nothing else reports: a JSON Schema `$id` that 404s, a package published from a commit the default branch does not reach, a file served at a URL nothing declares. None of these turns anything red today, and each one was a real defect somebody shipped without noticing.
@@ -43,7 +45,9 @@ convenience at a time.
 No account, no API key, no telemetry, and no network call unless you ask
 for one. If anything here ever needs a service of ours to answer, that is a
 bug — you would be right to refuse a checker with a dependency on the party
-being checked.
+being checked. That applies to the documentation too: every command in this
+file runs against a file in this repository, because a README whose first
+line fetches from our domain is one that stops working when we do.
 
 ## What mesh-lint is not
 
@@ -74,8 +78,7 @@ tooling is open; fork either, and check ours against yours.
 
 ## The formats these were written for
 
-Published, machine-readable, and implementable without installing anything:
-
-```bash
-curl -s https://flashyos.com/.well-known/specs.json | jq .
-```
+`directory/1`, `frontdoor/1`, `countersign/1`, `backlog/1`, `shipped/1` and the
+rest are Apache-2.0 and specified in the open at
+[github.com/flashylabs](https://github.com/flashylabs). Nothing in them requires
+an account, a key, or a call to us — including the checking.

@@ -21,14 +21,30 @@ jobs:
       # shallow clone answers it WRONGLY rather than refusing: `git merge-base
       # --is-ancestor` exits non-zero for a commit outside the graft window,
       # which is byte-identical to "not an ancestor".
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node }}
 
+      # `npm ci` REFUSES without a lockfile rather than falling back to
+      # `npm install` — EUSAGE, before a single test runs. A zero-dependency
+      # package feels like the one case that would not need one, which is
+      # exactly how this step went red on every push to every repository here
+      # and reported it as a test failure.
       - run: npm ci
-      # No tests yet: this job proves the package installs and loads.
-      - run: node -e "import(process.env.npm_package_name || '.')"
+      - name: The manifest is installable and claims nothing it has not got
+        run: |
+          set -euo pipefail
+          node --input-type=module -e "
+            import { readFileSync } from 'node:fs'
+            import { existsSync } from 'node:fs'
+            const m = JSON.parse(readFileSync('package.json', 'utf8'))
+            if (m.exports && !existsSync(m.exports['.'])) {
+              console.error('exports \'.\' points at ' + m.exports['.'] + ', which does not exist')
+              process.exit(1)
+            }
+            console.log(m.name + '@' + m.version + ' — name reserved, no source yet, and the manifest says so')
+          "
