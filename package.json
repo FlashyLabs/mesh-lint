@@ -24,8 +24,22 @@
     "well-known",
     "static-analysis"
   ],
+  "bin": {
+    "mesh-lint": "./src/cli.mjs"
+  },
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.mjs"
+    }
+  },
   "files": [
+    "src",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "scripts": {
+    "test": "node --test src/drift.test.mjs src/mesh-lint.test.mjs src/types.test.mjs"
+  }
 }

@@ -1,0 +1,53 @@
+name: mesh-lint
+description: Annotate the defects nothing else reports — a dead schema $id, a package published from an unreachable commit, a surface promised and absent.
+author: Flashy Labs
+
+branding:
+  icon: search
+  color: green
+
+inputs:
+  checks:
+    description: Comma-separated check ids. Omit to run every check.
+    required: false
+  gate:
+    description: Fail the job when a check finds something. Default false — it annotates.
+    required: false
+    default: 'false'
+  root:
+    description: Directory to check. Defaults to the workspace.
+    required: false
+    default: '.'
+  version:
+    description: Version of @flashyos/mesh-lint to run. Pin it in a workflow you care about.
+    required: false
+    default: 'latest'
+
+runs:
+  using: composite
+  steps:
+    - name: mesh-lint
+      shell: bash
+      env:
+        MESH_LINT_CHECKS: ${{ inputs.checks }}
+        MESH_LINT_GATE: ${{ inputs.gate }}
+        MESH_LINT_ROOT: ${{ inputs.root }}
+        MESH_LINT_VERSION: ${{ inputs.version }}
+      run: |
+        set -euo pipefail
+        ARGS=("--root" "$MESH_LINT_ROOT")
+        [ -n "$MESH_LINT_CHECKS" ] && ARGS+=("--checks" "$MESH_LINT_CHECKS")
+
+        # Annotations to the log, and the human-readable report to the summary.
+        # Two audiences: one reading the diff, one reading the run.
+        npx --yes @flashyos/mesh-lint@"$MESH_LINT_VERSION" "${ARGS[@]}" --github
+        {
+          echo '## mesh-lint'
+          echo '```'
+          npx --yes @flashyos/mesh-lint@"$MESH_LINT_VERSION" "${ARGS[@]}" || true
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        if [ "$MESH_LINT_GATE" = "true" ]; then
+          npx --yes @flashyos/mesh-lint@"$MESH_LINT_VERSION" "${ARGS[@]}" --gate > /dev/null
+        fi

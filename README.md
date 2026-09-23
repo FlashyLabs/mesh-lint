@@ -15,18 +15,41 @@
 
 Annotates a pull request with the defects nothing else reports: a JSON Schema `$id` that 404s, a package published from a commit the default branch does not reach, a file served at a URL nothing declares. None of these turns anything red today, and each one was a real defect somebody shipped without noticing.
 
-> **Not released yet.** The source for this one is still being written.
->
-> Everything below is the design and the reasoning. The code lands before
-> this repository is tagged, and the version stays at 0.0.0 until it does.
-
 ## Using it
+
+From a clone, today — no install, no registry:
+
+```bash
+git clone https://github.com/flashylabs/mesh-lint && cd mesh-lint
+node src/cli.mjs --root /path/to/your/repo
+```
+
+Once it is on npm and tagged (it is neither yet — see **Status**), the same
+checks run as one command, and as an Action:
+
+```bash
+npx @flashyos/mesh-lint                       # every check, this directory
+npx @flashyos/mesh-lint --checks well-known   # one of them
+npx @flashyos/mesh-lint --json                # machine-readable
+npx @flashyos/mesh-lint --gate                # exit 1 on a finding
+```
 
 ```yaml
 - uses: flashylabs/mesh-lint@v1
   with:
-    checks: schema-ids,published-from,declared-surfaces
+    checks: schema-ids,published-from,well-known
+    gate: false
 ```
+
+It **annotates and does not fail your build** unless you pass `gate: true`. A
+tool that turns a repository red on arrival is one people remove before
+reading what it found.
+
+`published-from` asks an ancestry question, so it needs history:
+`actions/checkout@v5` with `fetch-depth: 0`. On a shallow clone it refuses
+by name rather than answering — `git merge-base --is-ancestor` exits non-zero
+for a commit outside the graft window, which is byte-identical to *not an
+ancestor*, so the wrong answer arrives looking exactly like the right one.
 
 ## The invariants
 
@@ -49,6 +72,19 @@ being checked. That applies to the documentation too: every command in this
 file runs against a file in this repository, because a README whose first
 line fetches from our domain is one that stops working when we do.
 
+## Types
+
+Shipped, and checked against the module rather than against somebody’s
+memory of it. `src/types.test.mjs` imports the real barrel and fails if a
+declaration names an export that does not exist, or if an export has no
+declaration — the two directions a `.d.ts` rots in, neither of which a
+compiler can catch, because a declaration file is authoritative by
+construction.
+
+```ts
+import { lint, annotations, CHECKS, canAskAncestry } from '@flashyos/mesh-lint'
+```
+
 ## What mesh-lint is not
 
 - **Not a style linter.** It has no opinion about your code.
@@ -56,10 +92,18 @@ line fetches from our domain is one that stops working when we do.
 
 ## Status
 
-**Not released.** The checks exist and run inside the estate that
-found them; packaging them as an Action is the next piece of work. This
-repository is the licence, the security policy and the direction — nothing
-here is installable yet, and the version will say 0.1.0 on the day it is.
+**Not released. The code is here; the distribution is not.**
+
+The three checks run, are tested against fixtures rather than against the
+estate that found them, and `action.yml` is a composite action with no build
+step. What does not exist yet is a published package or a tag — measured
+2026-09-23, `@flashyos/mesh-lint` answers 404 on npm and this repository has
+no tags — so `npx @flashyos/mesh-lint` and `uses: flashylabs/mesh-lint@v1`
+both fail today. Clone it and run `node src/cli.mjs` until they do.
+
+That gap is named here rather than left for the first person who copies a line
+out of the section above, which is the same defect this package's own
+`well-known` check exists to find.
 
 ## Contributing
 
