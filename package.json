@@ -1,0 +1,28 @@
+{
+  "name": "@flashyos/mesh-lint",
+  "version": "0.0.0",
+  "description": "A GitHub Action for the checks that fail silently.",
+  "license": "Apache-2.0",
+  "author": "Flashy Labs",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flashylabs/mesh-lint.git"
+  },
+  "homepage": "https://github.com/flashylabs/mesh-lint#readme",
+  "bugs": "https://github.com/flashylabs/mesh-lint/issues",
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node -e \"import('./src/index.mjs')\""
+  }
+}
