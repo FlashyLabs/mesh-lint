@@ -1,0 +1,80 @@
+{
+  "contract": "directory/1",
+  "generated": "2026-09-29",
+  "org": "org/mesh-lint",
+  "nodes": [
+    {
+      "id": "org/mesh-lint",
+      "kind": "org",
+      "name": "Mesh Lint"
+    },
+    {
+      "id": "person/michael",
+      "kind": "person",
+      "name": "Michael Gord"
+    },
+    {
+      "id": "agent/mesh-lint-maintainer",
+      "kind": "agent",
+      "name": "maintainer",
+      "for": "org/mesh-lint"
+    },
+    {
+      "id": "agent/mesh-lint-review",
+      "kind": "agent",
+      "name": "review",
+      "for": "org/mesh-lint"
+    },
+    {
+      "id": "agent/mesh-lint-release",
+      "kind": "agent",
+      "name": "release",
+      "for": "org/mesh-lint"
+    },
+    {
+      "id": "agent/mesh-lint-conformance",
+      "kind": "agent",
+      "name": "conformance",
+      "for": "org/mesh-lint"
+    },
+    {
+      "id": "agent/mesh-lint-operations",
+      "kind": "agent",
+      "name": "operations",
+      "for": "org/mesh-lint"
+    }
+  ],
+  "edges": [
+    {
+      "from": "org/mesh-lint",
+      "rel": "staffs",
+      "to": "agent/mesh-lint-maintainer",
+      "by": "person/michael"
+    },
+    {
+      "from": "org/mesh-lint",
+      "rel": "staffs",
+      "to": "agent/mesh-lint-review",
+      "by": "person/michael"
+    },
+    {
+      "from": "org/mesh-lint",
+      "rel": "staffs",
+      "to": "agent/mesh-lint-release",
+      "by": "person/michael"
+    },
+    {
+      "from": "org/mesh-lint",
+      "rel": "staffs",
+      "to": "agent/mesh-lint-conformance",
+      "by": "person/michael"
+    },
+    {
+      "from": "org/mesh-lint",
+      "rel": "staffs",
+      "to": "agent/mesh-lint-operations",
+      "by": "person/michael"
+    }
+  ],
+  "x-note": "Five agents, one per charter role. Generated from flashyos.roles.json; a live org is provisioned from the charter with provision-org-from-charter."
+}
