@@ -20,6 +20,15 @@ The charter validates against the estate's dependency-free AAO checker:
 node vendor-aao-check.mjs validate flashyos.roles.json   # 0 issues
 ```
 
+`vendor-aao-check.mjs` is a byte-identical copy of the aao repository's own
+dependency-free port — re-vendor from there, never hand-edit. `src/drift.test.mjs`
+holds it byte-for-byte against that source (reporting UNKNOWN, never a pass, when
+the aao repository is not checked out beside this one), and `src/mesh.test.mjs`
+asserts every file and `node` command this document names is actually in the
+tree and that the check above exits 0 — because a document that tells a reader
+to run a file that is not there is the exact silent-reference defect mesh-lint
+was written to catch.
+
 **Becoming a live organisation.** The charter is what a live org is provisioned
 from. From a machine that holds `DATABASE_URL`:
 

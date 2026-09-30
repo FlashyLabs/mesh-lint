@@ -103,6 +103,14 @@ export declare function render(report: Report): string
 /** The branch an ancestry question is asked against. */
 export declare function defaultRef(root: string, execImpl?: (args: string[], cwd: string) => string): string
 
+/**
+ * The command-line entry point. `cli.mjs` — the package `bin` — is a thin
+ * wrapper that imports and calls this; running the module directly calls it
+ * through a guard. It writes to stdout/stderr and exits the process rather than
+ * returning. `argv` defaults to `process.argv.slice(2)`.
+ */
+export declare function main(argv?: string[]): Promise<void>
+
 // ── Allowances ─────────────────────────────────────────────────────────────
 
 /** The shortest an excuse may be. */

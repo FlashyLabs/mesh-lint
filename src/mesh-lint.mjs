@@ -226,9 +226,22 @@ export function render(report) {
   return L.join('\n')
 }
 
-const RUN = import.meta.url === `file://${process.argv[1]}`
-if (RUN) {
-  const argv = process.argv.slice(2)
+/**
+ * The command-line entry point.
+ *
+ * Extracted into a named export so `cli.mjs` — the file `package.json` declares
+ * as the `bin` — can be a thin wrapper that imports and calls it, rather than a
+ * byte-for-byte copy of this whole module. Two copies with nothing holding them
+ * equal drift the first time somebody edits one and forgets the other, and a
+ * `bin` serving stale logic while the library is correct is exactly the
+ * silently-diverged defect this tool exists to catch. There is now one
+ * implementation, reached three ways: the barrel imports it (and never calls
+ * it, having no argv), `node src/mesh-lint.mjs` runs it through the guard below,
+ * and the `bin` calls it explicitly.
+ *
+ * Writes to stdout/stderr and calls `process.exit`; it does not return.
+ */
+export async function main(argv = process.argv.slice(2)) {
   const flag = (n) => argv.includes(`--${n}`)
   const value = (n) => {
     const i = argv.indexOf(`--${n}`)
@@ -261,3 +274,6 @@ if (RUN) {
   if (report.failed.length) process.exit(2)
   process.exit(flag('gate') && report.findings > 0 ? 1 : 0)
 }
+
+const RUN = import.meta.url === `file://${process.argv[1]}`
+if (RUN) await main()
