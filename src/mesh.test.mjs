@@ -27,7 +27,9 @@ import { fileURLToPath } from 'node:url'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(HERE, '..')
-const MESH = readFileSync(join(ROOT, 'MESH.md'), 'utf8')
+// Normalise CRLF → LF so the line-based parsing below behaves identically on a
+// Windows checkout (where git may materialise CRLF) as on Linux/macOS.
+const MESH = readFileSync(join(ROOT, 'MESH.md'), 'utf8').replace(/\r\n?/g, '\n')
 
 /** Markdown link targets that point at a file in this repository. */
 function localLinkTargets(md) {
